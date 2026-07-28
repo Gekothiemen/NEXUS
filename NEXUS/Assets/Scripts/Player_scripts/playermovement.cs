@@ -1,34 +1,83 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 
-public class playermovement : MonoBehaviour
+public class Playermovement : MonoBehaviour
 {
+    public float rotationSpeed = 720f;
 
-    private Rigidbody rb;
-    float speed = 5f;
+    [SerializeField]
+    InputAction jump;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField]
+    float jumpForce = 5f;
+
+    Rigidbody rb;
+
+    [SerializeField]
+    private float speed = 5f;
+
+    [SerializeField]
+    private float mouseSensitivity = 2f;
+
+    private Vector3 moveDirection;
+    private float rotationY;
+
+
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
+        rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        HandleMovement();
+        HandleRotation();
 
+
+        // Moves player rotation to input AWSD
+        if (moveDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
     }
 
-
-    void FixedUpdate()
+    private void OnEnable()
     {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        jump.Enable();
+    }
+    private void FixedUpdate()
+    {
+        if (jump.IsPressed())
+        {
+            // needs to be changed later in the future when using height    
+            if (gameObject.transform.position.y < 1.1)
+            {
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
+        }
+    }
 
-        // Move relative to where the player is facing
-        Vector3 movement = transform.forward * z + transform.right * x;
+    private void HandleMovement()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
 
-        rb.linearVelocity = new Vector3(movement.x * speed, rb.linearVelocity.y, movement.z * speed);
+        moveDirection = new Vector3(horizontal, 0f, vertical);
+        moveDirection.Normalize();
+
+        transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
+    }
+
+    // Mouse rotation
+    private void HandleRotation()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        rotationY += mouseX * mouseSensitivity;
+
+        
     }
 }
