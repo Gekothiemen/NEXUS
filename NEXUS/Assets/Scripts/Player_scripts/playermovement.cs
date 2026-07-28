@@ -63,6 +63,9 @@ public class Playermovement : MonoBehaviour
 
     private void HandleMovement()
     {
+        // to change delay of the input go to "Project-Settings -> Input Manager and dropdown the axis, then dropdown the horizontal and vertical"
+        // Gravity is for delay when stopping (Higher number = stops faster)
+        // Sensitivity is for delay when beginning to walk (Higher number = faster response)
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
