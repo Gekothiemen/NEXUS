@@ -1,25 +1,31 @@
+using System;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Unity.Cinemachine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 public class Playermovement : MonoBehaviour
 {
     public float rotationSpeed = 720f;
 
-    [SerializeField]
-    InputAction jump;
+    [SerializeField] InputAction jump;
 
-    [SerializeField]
-    float jumpForce = 5f;
+    [SerializeField] int MaxJumps = 1;
+
+    [SerializeField] int jumpsLeft = 1;
+
+    [SerializeField] float jumpForce = 5f;
 
     Rigidbody rb;
 
-    [SerializeField]
-    private float speed = 5f;
+    [SerializeField] private float baseSpeed = 5f;
 
-    //[SerializeField]
-    // private float mouseSensitivity = 2f;
+    [SerializeField] private float speed;
+
+    [SerializeField] private float sprintSpeed = 1.4f;
+
+    [SerializeField] private LayerMask groundLayer;
 
     private Vector3 moveDirection;
     private float rotationY;
@@ -33,7 +39,7 @@ public class Playermovement : MonoBehaviour
     void Update()
     {
         HandleMovement();
-
+        HandleJump();
         // Turn character towards the direction of movement ONLY when giving input
         if (moveDirection != Vector3.zero)
         {
@@ -49,20 +55,9 @@ public class Playermovement : MonoBehaviour
     }
 
 
-    private void OnEnable()
-    {
-        jump.Enable();
-    }
     private void FixedUpdate()
     {
-        if (jump.IsPressed())
-        {
-            // needs to be changed later in the future when using height    
-            if (gameObject.transform.position.y < 1.1)
-            {
-                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            }
-        }
+        
     }
 
     // to change delay of the input go to "Project-Settings -> Input Manager and dropdown the axis, then dropdown the horizontal and vertical"
@@ -88,21 +83,39 @@ public class Playermovement : MonoBehaviour
         // 4. Calculate movement direction strictly along the horizontal plane
         moveDirection = (camForward * vertical + camRight * horizontal).normalized;
 
+        speed = baseSpeed;
+
         transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            speed = baseSpeed * sprintSpeed;
+            transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
+        }
     }
-
-
-
-
-    /*
-    // Mouse rotation
-    private void HandleRotation()
+    private void HandleJump()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        rotationY += mouseX * mouseSensitivity;
-
-        
+        if (Input.GetKeyDown(KeyCode.Space) && jumpsLeft > 0 )
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpsLeft -= 1;
+        }
+        else if (Input.GetKey(KeyCode.Space) && jumpsLeft == 0)
+        {
+            Debug.Log("ya cant jump mate");
+        }
     }
-    */
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("WhatIsGround"))
+        {
+            jumpsLeft = MaxJumps;
+        }
+    }
+
+
+
 
 }
