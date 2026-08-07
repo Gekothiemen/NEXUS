@@ -18,8 +18,8 @@ public class Playermovement : MonoBehaviour
     [SerializeField]
     private float speed = 5f;
 
-    [SerializeField]
-    private float mouseSensitivity = 2f;
+    //[SerializeField]
+    // private float mouseSensitivity = 2f;
 
     private Vector3 moveDirection;
     private float rotationY;
@@ -27,23 +27,27 @@ public class Playermovement : MonoBehaviour
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
         HandleMovement();
-        HandleRotation();
 
-
-        // Moves player rotation to input AWSD
+        // Turn character towards the direction of movement ONLY when giving input
         if (moveDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
+        // When moveDirection == Vector3.zero (standing still/idle), 
+        // the player does NOT rotate, allowing you to orbit the camera freely around them!
     }
+
 
     private void OnEnable()
     {
@@ -61,20 +65,36 @@ public class Playermovement : MonoBehaviour
         }
     }
 
+    // to change delay of the input go to "Project-Settings -> Input Manager and dropdown the axis, then dropdown the horizontal and vertical"
+    // Gravity is for delay when stopping (Higher number = stops faster)
+    // Sensitivity is for delay when beginning to walk (Higher number = faster response)
     private void HandleMovement()
     {
-        // to change delay of the input go to "Project-Settings -> Input Manager and dropdown the axis, then dropdown the horizontal and vertical"
-        // Gravity is for delay when stopping (Higher number = stops faster)
-        // Sensitivity is for delay when beginning to walk (Higher number = faster response)
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        moveDirection = new Vector3(horizontal, 0f, vertical);
-        moveDirection.Normalize();
+        // 1. Get the main camera's forward and right vectors
+        Vector3 camForward = UnityEngine.Camera.main.transform.forward;
+        Vector3 camRight = UnityEngine.Camera.main.transform.right;
+
+        // 2. Ignore pitch (up/down looking) by flattening Y to 0
+        camForward.y = 0f;
+        camRight.y = 0f;
+
+        // 3. Re-normalize to keep movement speed consistent
+        camForward.Normalize();
+        camRight.Normalize();
+
+        // 4. Calculate movement direction strictly along the horizontal plane
+        moveDirection = (camForward * vertical + camRight * horizontal).normalized;
 
         transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
     }
 
+
+
+
+    /*
     // Mouse rotation
     private void HandleRotation()
     {
@@ -83,4 +103,6 @@ public class Playermovement : MonoBehaviour
 
         
     }
+    */
+
 }
