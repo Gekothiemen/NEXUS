@@ -7,6 +7,8 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Playermovement : MonoBehaviour
 {
+    private CoolDowns cooldowns;
+
     public float rotationSpeed = 720f;
 
     [SerializeField] InputAction jump;
@@ -19,25 +21,30 @@ public class Playermovement : MonoBehaviour
 
     Rigidbody rb;
 
-    [SerializeField] private float baseSpeed = 5f;
+    [SerializeField] private float baseSpeed;
 
-    [SerializeField] private float speed;
+    [SerializeField] public float speed;
 
-    [SerializeField] private float sprintSpeed = 1.4f;
+    [SerializeField] private float sprintSpeed;
+
+    [SerializeField] public float dashSpeed;
 
     [SerializeField] private LayerMask groundLayer;
 
-    private Vector3 moveDirection;
+    public Vector3 moveDirection;
     private float rotationY;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        cooldowns = GetComponent<CoolDowns>();
+        cooldowns.HandleDash();
     }
 
     void Update()
     {
+        cooldowns.HandleDash();
         HandleMovement();
         HandleJump();
         // Turn character towards the direction of movement ONLY when giving input
@@ -87,6 +94,7 @@ public class Playermovement : MonoBehaviour
 
         transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
 
+
         if (Input.GetKey(KeyCode.LeftShift))
         {
             speed = baseSpeed * sprintSpeed;
@@ -106,6 +114,8 @@ public class Playermovement : MonoBehaviour
             Debug.Log("ya cant jump mate");
         }
     }
+
+    
 
     private void OnCollisionEnter(Collision collision)
     {

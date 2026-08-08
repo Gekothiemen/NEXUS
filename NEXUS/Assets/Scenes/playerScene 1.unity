@@ -691,6 +691,7 @@ GameObject:
   - component: {fileID: 1220757789}
   - component: {fileID: 1220757790}
   - component: {fileID: 1220757791}
+  - component: {fileID: 1220757792}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -859,12 +860,14 @@ MonoBehaviour:
   MaxJumps: 3
   jumpsLeft: 1
   jumpForce: 5
-  baseSpeed: 5
+  baseSpeed: 3.5
   speed: 5
-  sprintSpeed: 1.4
+  sprintSpeed: 1.2
+  dashSpeed: 2.4
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  moveDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &1220757791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,8 +882,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Camera
   followTarget: {fileID: 1999480544}
   rotationalSpeed: 300
-  BottomClamp: -60
-  TopClamp: 70
+  BottomClamp: -30
+  TopClamp: 60
+--- !u!114 &1220757792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1220757783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 978eb20a220a7c74eb1f46f4b82995ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  DashDuration: 0.2
+  DashCoolDown: 5
+  DashReady: 1
 --- !u!1 &1313600461
 GameObject:
   m_ObjectHideFlags: 0
