@@ -1,9 +1,17 @@
-using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.AdaptivePerformance.Provider.AdaptivePerformanceSubsystemDescriptor;
 
 public class Camera : MonoBehaviour
 {
+    [SerializeField] private CinemachineCamera vCam;
+
+    [Header("Zoom Settings")]
+    [SerializeField] private float zoomSpeed = 10f;
+    [SerializeField] private float minFOV = 20f;
+    [SerializeField] private float maxFOV = 60f;
+
     [SerializeField]
     private Transform followTarget;
 
@@ -25,6 +33,33 @@ public class Camera : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
     }
+
+    void Awake()
+    {
+        if (vCam == null)
+        {
+            vCam = GetComponent<CinemachineCamera>();
+        }
+    }
+
+    void Update()
+    {
+        if (vCam == null) return;
+
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+
+        if (scrollInput != 0)
+        {
+            // Scrolling up lowers FOV (zooms in), scrolling down raises FOV (zooms out)
+            float targetFOV = vCam.Lens.FieldOfView - (scrollInput * zoomSpeed);
+            vCam.Lens.FieldOfView = Mathf.Clamp(targetFOV, minFOV, maxFOV);
+        }
+    }
+
+
+
+
+
     private void LateUpdate()
     {
         CameraLogic();
