@@ -691,7 +691,6 @@ GameObject:
   - component: {fileID: 1220757789}
   - component: {fileID: 1220757790}
   - component: {fileID: 1220757791}
-  - component: {fileID: 1220757792}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -712,12 +711,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1939075497}
   - {fileID: 658474421}
   - {fileID: 953485217}
   - {fileID: 697388229}
   - {fileID: 311407504}
   - {fileID: 1999480544}
+  - {fileID: 1939075497}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &1220757785
@@ -839,6 +838,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e09565b066d51244bb7ccbaef242720c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::playermovement
+  doubleTapTime: 0.3
+  dashDuration: 0.2
+  dashCooldown: 1
+  isDashing: 0
   rotationSpeed: 500
   jump:
     m_Name: Jump
@@ -858,12 +861,12 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   MaxJumps: 3
-  jumpsLeft: 1
+  jumpsLeft: 3
   jumpForce: 5
-  baseSpeed: 3.5
+  baseSpeed: 5
   speed: 5
-  sprintSpeed: 1.2
-  dashSpeed: 2.4
+  sprintSpeed: 1.5
+  DashSpeed: 3
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -880,25 +883,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbdd9ee963ae1d2418c38ba48a4fde8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Camera
+  vCam: {fileID: 989071894}
+  zoomSpeed: 10
+  minFOV: 20
+  maxFOV: 100
   followTarget: {fileID: 1999480544}
   rotationalSpeed: 300
   BottomClamp: -30
   TopClamp: 60
---- !u!114 &1220757792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1220757783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 978eb20a220a7c74eb1f46f4b82995ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  DashDuration: 0.2
-  DashCoolDown: 5
-  DashReady: 1
 --- !u!1 &1313600461
 GameObject:
   m_ObjectHideFlags: 0
@@ -1136,7 +1128,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1704320949}
   - component: {fileID: 1704320948}
-  - component: {fileID: 1704320947}
   - component: {fileID: 1704320946}
   m_Layer: 0
   m_Name: Third Person Aim Camera
@@ -1163,32 +1154,6 @@ MonoBehaviour:
   IgnoreTag: 
   AimDistance: 200
   NoiseCancellation: 1
---- !u!114 &1704320947
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1704320945}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
-  Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: 0.8, y: -0.4, z: 0}
-  VerticalArmLength: 1.2
-  CameraSide: 1
-  CameraDistance: 4
-  AvoidObstacles:
-    Enabled: 0
-    CollisionFilter:
-      serializedVersion: 2
-      m_Bits: 1
-    IgnoreTag: 
-    CameraRadius: 0.2
-    DampingIntoCollision: 0
-    DampingFromCollision: 0.5
 --- !u!114 &1704320948
 MonoBehaviour:
   m_ObjectHideFlags: 0
