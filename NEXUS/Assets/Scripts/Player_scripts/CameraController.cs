@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.AdaptivePerformance.Provider.AdaptivePerformanceSubsystemDescriptor;
 
-public class Camera : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
     [SerializeField] private CinemachineCamera vCam;
 
