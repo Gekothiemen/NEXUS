@@ -48,9 +48,7 @@ public class Playermovement : MonoBehaviour
 
     void Update()
     {
-        HandleMovement();
-        HandleJump();
-        HandleDash();
+        
         // Turn character towards the direction of movement ONLY when giving input
         if (moveDirection != Vector3.zero)
         {
@@ -68,7 +66,9 @@ public class Playermovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-      
+        HandleMovement();
+        HandleJump();
+        HandleDash();
     }
 
     // to change delay of the input go to "Project-Settings -> Input Manager and dropdown the axis, then dropdown the horizontal and vertical"
