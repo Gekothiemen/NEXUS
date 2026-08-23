@@ -2,8 +2,6 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Experimental.GraphView.GraphView;
-
 
 public class Playermovement : MonoBehaviour
 {
@@ -17,40 +15,58 @@ public class Playermovement : MonoBehaviour
 
     public float rotationSpeed = 720f;
 
-    [SerializeField] InputAction jump;
-
     [SerializeField] int MaxJumps = 1;
-
     [SerializeField] int jumpsLeft = 1;
-
     [SerializeField] float jumpForce = 5f;
 
     Rigidbody rb;
 
-    [SerializeField] private float baseSpeed;
-
+    [SerializeField] private float baseSpeed = 5f;
     [SerializeField] private float speed;
-
     [SerializeField] private float sprintSpeed = 1.5f;
+    [SerializeField] private float DashSpeed = 3f;
 
-    [SerializeField] private float DashSpeed;
-
-    [SerializeField] private LayerMask groundLayer;
+    // Input collection variables
+    private float inputHorizontal;
+    private float inputVertical;
+    private bool jumpRequested = false;
 
     public Vector3 moveDirection;
-    private float rotationY;
-
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        speed = baseSpeed;
+
+        // CLEANUP: Clean up the redundant UnityEditor import from the top of your file
     }
 
     void Update()
     {
-        
-        // Turn character towards the direction of movement ONLY when giving input
-        if (moveDirection != Vector3.zero)
+        // 1. GATHER INPUT CONSTANTLY (Never misses a keystroke)
+        inputHorizontal = Input.GetAxis("Horizontal");
+        inputVertical = Input.GetAxis("Vertical");
+
+        if (Input.GetKeyDown(KeyCode.Space) && jumpsLeft > 0)
+        {
+            jumpRequested = true;
+        }
+
+        HandleDashInput();
+
+        // 2. CALCULATE CAMERA-RELATIVE DIRECTION
+        Vector3 camForward = UnityEngine.Camera.main.transform.forward;
+        Vector3 camRight = UnityEngine.Camera.main.transform.right;
+
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        moveDirection = (camForward * inputVertical + camRight * inputHorizontal).normalized;
+
+        // 3. HANDLE ROTATION (Visuals update perfectly per frame)
+        if (moveDirection != Vector3.zero && !isDashing)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(
@@ -59,78 +75,64 @@ public class Playermovement : MonoBehaviour
                 rotationSpeed * Time.deltaTime
             );
         }
-        // When moveDirection == Vector3.zero (standing still/idle), 
-        // the player does NOT rotate, allowing you to orbit the camera freely around them!
     }
-
 
     private void FixedUpdate()
     {
+        // 4. APPLY ALL PHYSICS AND MOVEMENTS TOGETHER
         HandleMovement();
         HandleJump();
-        HandleDash();
     }
 
-    // to change delay of the input go to "Project-Settings -> Input Manager and dropdown the axis, then dropdown the horizontal and vertical"
-    // Gravity is for delay when stopping (Higher number = stops faster)
-    // Sensitivity is for delay when beginning to walk (Higher number = faster response)
     public void HandleMovement()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        // Don't override normal movement velocity calculation if currently dashing
+        if (isDashing) return;
 
-        // 1. Get the main camera's forward and right vectors
-        Vector3 camForward = UnityEngine.Camera.main.transform.forward;
-        Vector3 camRight = UnityEngine.Camera.main.transform.right;
-
-        // 2. Ignore pitch (up/down looking) by flattening Y to 0
-        camForward.y = 0f;
-        camRight.y = 0f;
-
-        // 3. Re-normalize to keep movement speed consistent
-        camForward.Normalize();
-        camRight.Normalize();
-
-        // 4. Calculate movement direction strictly along the horizontal plane
-        moveDirection = (camForward * vertical + camRight * horizontal).normalized;
-
-        transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
-
+        // Calculate sprinting modifiers
         if (Input.GetKey(KeyCode.LeftShift))
         {
             speed = baseSpeed * sprintSpeed;
         }
-        else 
+        else
         {
             speed = baseSpeed;
         }
 
+        // Calculate horizontal velocity targets
+        Vector3 targetVelocity = moveDirection * speed;
+
+        // Retain the current falling/rising physics speed
+        targetVelocity.y = rb.linearVelocity.y;
+
+        // Apply safely to the rigidbody
+        rb.linearVelocity = targetVelocity;
     }
+
     private void HandleJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && jumpsLeft > 0 )
+        if (jumpRequested)
         {
-            rb.linearVelocity = Vector3.zero;
+            // Zero out vertical velocity so double jumps (if MaxJumps > 1) feel consistent
+            Vector3 currentVel = rb.linearVelocity;
+            currentVel.y = 0f;
+            rb.linearVelocity = currentVel;
+
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             jumpsLeft -= 1;
-        }
-        else if (Input.GetKey(KeyCode.Space) && jumpsLeft == 0)
-        {
-         
+
+            jumpRequested = false; // Reset the request flag
         }
     }
 
-    private void HandleDash()
+    private void HandleDashInput()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            // First Shift press
             if (Time.time - lastShiftTapTime <= doubleTapTime && canDash)
             {
                 StartCoroutine(Dash());
             }
-
-            // Remember when Shift was pressed
             lastShiftTapTime = Time.time;
         }
     }
@@ -140,35 +142,35 @@ public class Playermovement : MonoBehaviour
         canDash = false;
         isDashing = true;
 
-        speed = baseSpeed * DashSpeed;
-
         float dashTimer = 0f;
+        float currentDashSpeed = baseSpeed * DashSpeed;
+
+        // If player isn't moving an axis, dash in the direction they are facing
+        Vector3 dashDir = moveDirection != Vector3.zero ? moveDirection : transform.forward;
 
         while (dashTimer < dashDuration)
         {
-            transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
+            dashTimer += Time.fixedDeltaTime; // Match physics clock loops inside coroutines
 
-            dashTimer += Time.deltaTime;
-            yield return null;
+            Vector3 dashVelocity = dashDir * currentDashSpeed;
+            dashVelocity.y = rb.linearVelocity.y; // Keep gravity working while dashing
+            rb.linearVelocity = dashVelocity;
+
+            yield return new WaitForFixedUpdate(); // Wait for next FixedUpdate frame
         }
 
         isDashing = false;
 
-        // Cooldown
         yield return new WaitForSeconds(dashCooldown);
-
         canDash = true;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        // Matches your exact ground layer assignment string setup
         if (collision.gameObject.layer == LayerMask.NameToLayer("WhatIsGround"))
         {
             jumpsLeft = MaxJumps;
         }
     }
-
-
-
-
 }

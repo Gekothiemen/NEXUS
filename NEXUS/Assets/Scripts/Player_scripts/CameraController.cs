@@ -1,7 +1,5 @@
 using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using static UnityEngine.AdaptivePerformance.Provider.AdaptivePerformanceSubsystemDescriptor;
 
 public class CameraController : MonoBehaviour
 {
@@ -12,26 +10,30 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float minFOV = 20f;
     [SerializeField] private float maxFOV = 60f;
 
-    [SerializeField]
-    private Transform followTarget;
+    [SerializeField] private Transform followTarget;
 
-    [SerializeField]
-    private float rotationalSpeed = 30f;
-
-    [SerializeField]
-    private float BottomClamp = -40f;
-
-    [SerializeField]
-    private float TopClamp = 70f;
-
-    Rigidbody rb;
+    [Header("Rotation Settings")]
+    [SerializeField] private float rotationalSpeed = 3f; // Reduced value (Time.deltaTime is removed from calculation loop)
+    [SerializeField] private float BottomClamp = -40f;
+    [SerializeField] private float TopClamp = 70f;
 
     private float cinemachineTargetPitch;
     private float cinemachineTargetYaw;
+
+    // Cache inputs per frame
+    private float cachedMouseX;
+    private float cachedMouseY;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        rb = GetComponent<Rigidbody>();
+
+        // Initialize targets with current starting rotation to prevent camera snaps on spawn
+        if (followTarget != null)
+        {
+            cinemachineTargetYaw = followTarget.eulerAngles.y;
+            cinemachineTargetPitch = followTarget.eulerAngles.x;
+        }
     }
 
     void Awake()
@@ -46,50 +48,44 @@ public class CameraController : MonoBehaviour
     {
         if (vCam == null) return;
 
+        // 1. Handle Zoom
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-
         if (scrollInput != 0)
         {
-            // Scrolling up lowers FOV (zooms in), scrolling down raises FOV (zooms out)
             float targetFOV = vCam.Lens.FieldOfView - (scrollInput * zoomSpeed);
             vCam.Lens.FieldOfView = Mathf.Clamp(targetFOV, minFOV, maxFOV);
         }
+
+        // 2. Gather Raw Mouse Input in Update (Crucial for smooth tracking)
+        cachedMouseX = Input.GetAxisRaw("Mouse X") * rotationalSpeed;
+        cachedMouseY = Input.GetAxisRaw("Mouse Y") * rotationalSpeed;
     }
-
-
-
-
 
     private void LateUpdate()
     {
+        if (followTarget == null) return;
+
         CameraLogic();
     }
-    private float getMouseInput(string axis)
-    {
-        return Input.GetAxis(axis) * rotationalSpeed * Time.deltaTime;
-    }
+
     private void CameraLogic()
     {
-        float mouseX = getMouseInput("Mouse X");
-        float mouseY = getMouseInput("Mouse Y");
+        // 3. Process accumulated rotation variables
+        cinemachineTargetPitch -= cachedMouseY; // Invert Y directly
+        cinemachineTargetYaw += cachedMouseX;
 
-        cinemachineTargetPitch = UpdateRotation(cinemachineTargetPitch, mouseY, BottomClamp, TopClamp, true);
-        cinemachineTargetYaw = UpdateRotation(cinemachineTargetYaw, mouseX, float.MinValue, float.MaxValue, false);
+        // Clamp the values safely
+        cinemachineTargetPitch = Mathf.Clamp(cinemachineTargetPitch, BottomClamp, TopClamp);
 
-        ApplyRotations(cinemachineTargetPitch, cinemachineTargetYaw);
-    }
+        // Reset Yaw wrap arounds so the float numbers don't scale infinitely
+        if (cinemachineTargetYaw < -360f) cinemachineTargetYaw += 360f;
+        if (cinemachineTargetYaw > 360f) cinemachineTargetYaw -= 360f;
 
-    private void ApplyRotations(float pitch, float yaw)
-    {
-        // Apply BOTH pitch (up/down) and yaw (left/right) strictly to the camera target!
-        // This allows the camera to orbit freely 360 degrees around the player.
-        followTarget.rotation = Quaternion.Euler(pitch, yaw, 0f);
-    }
+        // 4. Apply rotations directly to the tracking target anchor
+        followTarget.rotation = Quaternion.Euler(cinemachineTargetPitch, cinemachineTargetYaw, 0f);
 
-
-    private float UpdateRotation(float currentRotation, float input, float min, float max, bool isXAxis)
-    {
-        currentRotation += isXAxis ? -input : input;
-        return Mathf.Clamp(currentRotation, min, max);
+        // 5. Clear inputs so they don't drift if the player stops moving the mouse
+        cachedMouseX = 0f;
+        cachedMouseY = 0f;
     }
 }
