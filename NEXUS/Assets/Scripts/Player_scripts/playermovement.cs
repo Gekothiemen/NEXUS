@@ -47,6 +47,9 @@ public class Playermovement : MonoBehaviour
         inputHorizontal = Input.GetAxis("Horizontal");
         inputVertical = Input.GetAxis("Vertical");
 
+       
+       
+
         if (Input.GetKeyDown(KeyCode.Space) && jumpsLeft > 0)
         {
             jumpRequested = true;
