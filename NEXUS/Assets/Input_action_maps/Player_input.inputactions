@@ -21,7 +21,7 @@
                     "id": "79185d97-ae5c-4a9a-ab37-6dcaa6d0eecf",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Hold,MultiTap",
+                    "interactions": "",
                     "initialStateCheck": false
                 },
                 {
@@ -30,7 +30,7 @@
                     "id": "a90ab2b6-b5cc-4fc3-8a2e-94b880dcbe63",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Hold,MultiTap",
+                    "interactions": "MultiTap",
                     "initialStateCheck": false
                 },
                 {

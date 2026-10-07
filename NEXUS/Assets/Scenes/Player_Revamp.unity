@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 311407507}
   - component: {fileID: 311407506}
   - component: {fileID: 311407505}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: eyeball_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6323,7 +6323,7 @@ GameObject:
   - component: {fileID: 658474424}
   - component: {fileID: 658474423}
   - component: {fileID: 658474422}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: eyeball_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6613,7 +6613,7 @@ GameObject:
   - component: {fileID: 697388232}
   - component: {fileID: 697388231}
   - component: {fileID: 697388230}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: pupil_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6725,7 +6725,7 @@ GameObject:
   - component: {fileID: 953485220}
   - component: {fileID: 953485219}
   - component: {fileID: 953485218}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: pupil_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6944,7 +6944,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1176669751}
   - component: {fileID: 1176669752}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Wallcollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7005,7 +7005,7 @@ GameObject:
   - component: {fileID: 1220757789}
   - component: {fileID: 1220757793}
   - component: {fileID: 1220757792}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -7124,7 +7124,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1220757783}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -7171,8 +7171,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01984cd52ea4a8845b5cf3c17917b220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterController
-  jumpForce: 100
-  moveSpeed: 2
+  WhatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  playercollision: {fileID: 0}
+  MaxJumps: 3
+  jumpsLeft: 1
+  jumpForce: 10
+  jumpRequested: 0
+  sprintSpeed: 2
+  walkSpeed: 10
+  currentSpeed: 0
 --- !u!114 &1220757795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7215,7 +7224,19 @@ MonoBehaviour:
     m_ActionId: e6b52525-997f-4f8d-9160-9c877e10a81b
     m_ActionName: 'Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/XInputControllerWindows/leftStick/up,/XInputControllerWindows/leftStick/down,/XInputControllerWindows/leftStick/left,/XInputControllerWindows/leftStick/right]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1220757793}
+        m_TargetAssemblyTypeName: CharacterController, Assembly-CSharp
+        m_MethodName: OnSprint
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 79185d97-ae5c-4a9a-ab37-6dcaa6d0eecf
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift,/XInputControllerWindows/leftStickPress]'
   - m_PersistentCalls:
@@ -16940,7 +16961,7 @@ GameObject:
   - component: {fileID: 1939075495}
   - component: {fileID: 1939075499}
   - component: {fileID: 1939075498}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PlayerCam(3RD_person)
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
