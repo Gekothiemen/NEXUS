@@ -32,5 +32,5 @@ public class CharacterController : MonoBehaviour
         rb.linearVelocity = new Vector3(moveInput.x * moveSpeed, rb.linearVelocity.y, moveInput.y * moveSpeed);
     }
 
-    
+    public void OnSprint(InputAction.CallbackContext ctx)
 }
