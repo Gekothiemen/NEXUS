@@ -21,7 +21,7 @@
                     "id": "79185d97-ae5c-4a9a-ab37-6dcaa6d0eecf",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "initialStateCheck": false
                 },
                 {
@@ -30,16 +30,7 @@
                     "id": "a90ab2b6-b5cc-4fc3-8a2e-94b880dcbe63",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "MultiTap",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Interact",
-                    "type": "Button",
-                    "id": "7d6d27e1-79e8-47f4-b704-137f108a86a4",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "Hold,Press",
+                    "interactions": "MultiTap(tapTime=0.4)",
                     "initialStateCheck": false
                 },
                 {
@@ -49,6 +40,15 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "7d6d27e1-79e8-47f4-b704-137f108a86a4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold,Press",
                     "initialStateCheck": false
                 }
             ],
@@ -79,7 +79,7 @@
                     "name": "",
                     "id": "aa5a2db9-8ccc-46dc-ae77-5259b972aada",
                     "path": "<Keyboard>/leftShift",
-                    "interactions": "MultiTap",
+                    "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard",
                     "action": "Dash",
