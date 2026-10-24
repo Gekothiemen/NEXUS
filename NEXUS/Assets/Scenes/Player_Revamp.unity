@@ -640,6 +640,8 @@ MonoBehaviour:
   attackDistance: 2
   playerhealth: {fileID: 1220757796}
   player: {fileID: 1220757783}
+  minPos: {x: 0, y: 0, z: 0}
+  maxPos: {x: 0, y: 0, z: 0}
 --- !u!195 &190345682
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -767,7 +769,7 @@ GameObject:
   - component: {fileID: 311407507}
   - component: {fileID: 311407506}
   - component: {fileID: 311407505}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: eyeball_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7098,7 +7100,7 @@ GameObject:
   - component: {fileID: 658474424}
   - component: {fileID: 658474423}
   - component: {fileID: 658474422}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: eyeball_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7388,7 +7390,7 @@ GameObject:
   - component: {fileID: 697388232}
   - component: {fileID: 697388231}
   - component: {fileID: 697388230}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: pupil_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7500,7 +7502,7 @@ GameObject:
   - component: {fileID: 953485220}
   - component: {fileID: 953485219}
   - component: {fileID: 953485218}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: pupil_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7719,7 +7721,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1176669751}
   - component: {fileID: 1176669752}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wallcollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7856,7 +7858,7 @@ GameObject:
   - component: {fileID: 1220757793}
   - component: {fileID: 1220757792}
   - component: {fileID: 1220757796}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -8161,7 +8163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1343452494}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: stepRayUpper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8192,7 +8194,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1398132246}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: stepRayLower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8780,7 +8782,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1602236688}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: groundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17721,7 +17723,7 @@ GameObject:
   - component: {fileID: 1939075495}
   - component: {fileID: 1939075499}
   - component: {fileID: 1939075498}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerCam(3RD_person)
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -17888,7 +17890,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1999480544}
   - component: {fileID: 1999480545}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CameraPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}

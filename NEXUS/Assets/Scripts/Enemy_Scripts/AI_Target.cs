@@ -10,6 +10,9 @@ public class AI_Target : MonoBehaviour
     public PlayerHealth playerhealth;
     public GameObject player;
     bool noticesPlayer;
+    bool onCoolDown;
+    public Vector3 minPos;
+    public Vector3 maxPos;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -21,7 +24,6 @@ public class AI_Target : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         
     }
     private void OnTriggerStay(Collider player)
@@ -42,6 +44,10 @@ public class AI_Target : MonoBehaviour
 
     public void attackPlayer()
     {
-        playerhealth.OnTakeDamage(10);
+        if(onCoolDown == false)
+        {
+           playerhealth.OnTakeDamage(10);
+        }
+        
     }
 }
